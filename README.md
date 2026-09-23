@@ -1,6 +1,6 @@
-# LinkUp
+# LCC Chat
 
-LinkUp is a Discord-inspired browser workspace for one-to-one voice calls, direct messages, and a shared `#central` chat. Voice uses PeerJS/WebRTC; chat is backed by Cloudflare Workers KV.
+LCC Chat is a Discord-inspired browser workspace for one-to-one voice calls, direct messages, and a shared `#central` chat. Voice uses PeerJS/WebRTC; chat is backed by Cloudflare Workers KV.
 
 ## Deploy to Cloudflare Workers
 
