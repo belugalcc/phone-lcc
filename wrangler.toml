@@ -1,0 +1,11 @@
+name = "phone-lcc"
+main = "worker.js"
+compatibility_date = "2026-09-23"
+
+[assets]
+directory = "."
+binding = "ASSETS"
+
+[[kv_namespaces]]
+binding = "LCC_KV"
+id = "751d8e73870244c5a758d0750c834acf"
