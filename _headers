@@ -1,4 +1,5 @@
 /*
-  Permissions-Policy: microphone=*
-  Cross-Origin-Embedder-Policy: require-corp
-  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: microphone=(self)
+
+/sw.js
+  Cache-Control: no-cache

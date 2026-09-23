@@ -1,178 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LinkUp — School Calls</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#313338">
+  <title>LinkUp — Calls & chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js" defer></script>
 </head>
 <body>
-
-  <!-- SCREEN: Landing / Set your name -->
-  <div id="screen-join" class="screen active">
-    <div class="brand">
-      <div class="brand-icon">📡</div>
-      <h1>LinkUp</h1>
-      <p class="brand-sub">Instant voice calls between Chromebooks</p>
-    </div>
-
-    <div class="card" id="join-card">
-      <h2>Get started</h2>
-      <p class="hint">Pick a display name once. LinkUp saves your account on this device so you stay signed in.</p>
-
-      <label for="input-name">Your name</label>
-      <input id="input-name" type="text" placeholder="e.g. Alex" maxlength="24" autocomplete="off" />
-
-      <button id="btn-start" class="btn btn-primary">Create my Call ID →</button>
-    </div>
-  </div>
-
-  <!-- SCREEN: Lobby — waiting for calls / make a call -->
-  <div id="screen-lobby" class="screen">
-    <header class="top-bar">
-      <div class="brand-sm">📡 LinkUp</div>
-      <div id="status-pill" class="pill pill-online">● Online</div>
-    </header>
-
-    <div class="lobby-body">
-      <!-- Your ID -->
-      <div class="card id-card">
-        <span class="eyebrow">Your Call ID</span>
-        <div class="id-display">
-          <span id="my-peer-id">—</span>
-          <button id="btn-copy" class="icon-btn" title="Copy ID">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          </button>
-        </div>
-        <p class="id-hint">This account ID is saved on this device and reused every time you open LinkUp.</p>
-      </div>
-
-      <!-- Call someone -->
-      <div class="card call-card">
-        <span class="eyebrow">Call someone</span>
-        <label for="input-callee-id">Their Call ID</label>
-        <div class="input-row">
-          <input id="input-callee-id" type="text" placeholder="Paste their ID here" autocomplete="off" />
-          <button id="btn-call" class="btn btn-primary btn-icon">
-            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-            Call
-          </button>
-        </div>
-      </div>
-
-
-      <!-- Friends and account directory -->
-      <div class="card people-card">
-        <span class="eyebrow">Friends & accounts</span>
-        <p class="hint compact">Add an account ID to save it, message it, and make it visible in your account list.</p>
-        <label for="input-friend-id">Friend account ID</label>
-        <div class="input-row">
-          <input id="input-friend-id" type="text" placeholder="Paste an account ID" autocomplete="off" />
-          <button id="btn-add-friend" class="btn btn-primary btn-icon">Add</button>
-        </div>
-        <div id="people-list" class="people-list" aria-live="polite"></div>
-      </div>
-
-      <!-- Messaging -->
-      <div class="card chat-card">
-        <span class="eyebrow">Messages</span>
-        <div class="chat-header">
-          <div>
-            <h3 id="chat-title">Pick a friend</h3>
-            <p id="chat-subtitle">Choose an account above to start messaging.</p>
-          </div>
-        </div>
-        <div id="message-thread" class="message-thread">
-          <p class="empty-state">Messages show up here.</p>
-        </div>
-        <div class="input-row chat-input">
-          <input id="input-message" type="text" placeholder="Type a message" autocomplete="off" disabled />
-          <button id="btn-send" class="btn btn-primary btn-icon" disabled>Send</button>
-        </div>
-      </div>
-
-      <!-- Recent / instructions -->
-      <div class="tips">
-        <div class="tip-item">
-          <span class="tip-num">1</span>
-          <span>Add a friend by account ID, then call or message them</span>
-        </div>
-        <div class="tip-item">
-          <span class="tip-num">2</span>
-          <span>Choose any saved account from the list to view it</span>
-        </div>
-        <div class="tip-item">
-          <span class="tip-num">3</span>
-          <span>Messages are direct between browsers while both people are online</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCREEN: Incoming call -->
-  <div id="screen-incoming" class="screen">
-    <div class="call-overlay">
-      <div class="caller-avatar" id="incoming-avatar">?</div>
-      <h2 id="incoming-name">Someone</h2>
-      <p class="call-label">Incoming call…</p>
-      <div class="call-actions">
-        <button id="btn-reject" class="call-btn call-btn-end">
-          <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-        </button>
-        <button id="btn-accept" class="call-btn call-btn-accept">
-          <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-        </button>
-      </div>
-      <div class="action-labels">
-        <span>Decline</span>
-        <span>Accept</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCREEN: Active call -->
-  <div id="screen-call" class="screen">
-    <div class="call-overlay call-active-overlay">
-      <div class="call-status-badge" id="call-status-badge">Connecting…</div>
-      <div class="caller-avatar large" id="active-avatar">?</div>
-      <h2 id="active-name">—</h2>
-      <div id="call-timer" class="call-timer">0:00</div>
-
-      <div class="volume-indicator" id="vol-indicator">
-        <div class="vol-bar" id="v1"></div>
-        <div class="vol-bar" id="v2"></div>
-        <div class="vol-bar" id="v3"></div>
-        <div class="vol-bar" id="v4"></div>
-        <div class="vol-bar" id="v5"></div>
-      </div>
-
-      <div class="active-call-controls">
-        <button id="btn-mute" class="ctrl-btn" title="Mute">
-          <svg id="mute-icon-on" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
-          <svg id="mute-icon-off" width="22" height="22" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V20c0 .55.45 1 1 1s1-.45 1-1v-2.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/></svg>
-          <span>Mute</span>
-        </button>
-        <button id="btn-hangup" class="ctrl-btn ctrl-hangup" title="Hang up">
-          <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" transform="rotate(135 12 12)"/></svg>
-          <span>End</span>
-        </button>
-        <button id="btn-speaker" class="ctrl-btn" title="Speaker">
-          <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-          <span>Speaker</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div id="toast" class="toast" aria-live="polite"></div>
-
-  <!-- Hidden audio element -->
-  <audio id="remote-audio" autoplay playsinline></audio>
-
+  <main id="app" class="app-shell" hidden>
+    <aside class="rail" aria-label="Navigation">
+      <button class="rail-mark" aria-label="LinkUp home">L</button>
+      <span class="rail-divider"></span>
+      <button class="rail-button active" data-view="home" aria-label="Home">⌂</button>
+      <button class="rail-button" data-view="central" aria-label="Central chat">#</button>
+      <button class="rail-button" data-view="settings" aria-label="Settings">⚙</button>
+    </aside>
+    <aside class="sidebar">
+      <div class="sidebar-top"><strong>LinkUp</strong><button id="new-dm" class="plain-button" aria-label="New direct message">＋</button></div>
+      <div class="search-wrap"><input id="friend-id" placeholder="Add by Call ID" autocomplete="off"><button id="add-friend" aria-label="Add friend">Add</button></div>
+      <nav class="channel-list" aria-label="Conversations">
+        <button class="nav-item active" data-view="home"><span>⌂</span> Friends</button>
+        <button class="nav-item" data-view="central"><span>#</span> central <b id="central-unread" hidden></b></button>
+        <p class="section-label">DIRECT MESSAGES</p>
+        <div id="dm-list"></div>
+      </nav>
+      <div class="account-bar"><span id="account-avatar" class="avatar small">?</span><div><strong id="account-name">Connecting</strong><small id="account-id">Starting voice service…</small></div><button class="plain-button" data-view="settings" aria-label="Settings">⚙</button></div>
+    </aside>
+    <section class="content">
+      <header class="channel-header"><div><span id="channel-icon">⌂</span><strong id="channel-name">Friends</strong><span id="channel-topic">Call or message people you know.</span></div><div class="header-actions"><span id="connection-state" class="status"><i></i> Connecting</span><button id="copy-id" class="header-button">Copy ID</button></div></header>
+      <section id="view-home" class="view active">
+        <div class="home-hero"><div class="hero-icon">✦</div><h1>Ready to connect?</h1><p>Start a high-quality voice call or open a private conversation.</p><div class="call-box"><input id="callee-id" placeholder="Paste a Call ID to start a voice call" autocomplete="off"><button id="call-button">Start call</button></div><p class="own-id">Your Call ID <code id="my-peer-id">…</code></p></div>
+        <div class="friend-heading"><h2>Friends</h2><span id="friend-count">0 friends</span></div><div id="friend-list" class="friend-list"></div>
+      </section>
+      <section id="view-chat" class="view chat-view">
+        <div id="message-list" class="message-list" aria-live="polite"></div>
+        <form id="message-form" class="composer"><input id="message-input" maxlength="1200" placeholder="Message" autocomplete="off"><button aria-label="Send message">Send</button></form>
+      </section>
+      <section id="view-settings" class="view settings-view"><div class="settings-card"><h1>Settings</h1><p>Control how LinkUp works on this device.</p><div class="setting-row"><div><strong>Desktop notifications</strong><span>Get notified for new direct messages and central chat, even when this tab is in the background.</span></div><button id="notification-toggle" class="toggle" aria-pressed="false"><i></i></button></div><div class="setting-row"><div><strong>Voice quality</strong><span>LinkUp requests mono, echo-cancelled Opus audio optimized for conversations.</span></div><span class="quality-badge">HD voice</span></div><div class="setting-row"><div><strong>Your Call ID</strong><span id="settings-id">—</span></div><button id="settings-copy" class="secondary-button">Copy</button></div></div></section>
+    </section>
+  </main>
+  <section id="join" class="join-screen"><div class="join-card"><div class="join-logo">L</div><h1>Welcome to LinkUp</h1><p>Voice calls and chat, together in one place.</p><label for="name-input">DISPLAY NAME</label><input id="name-input" maxlength="24" placeholder="What should people call you?" autocomplete="name"><button id="start-button">Continue</button><small>By continuing, you can call anyone who shares their Call ID.</small></div></section>
+  <section id="call-modal" class="call-modal" hidden><div class="call-card"><span id="call-state" class="call-state">Calling</span><div id="call-avatar" class="avatar call-avatar">?</div><h1 id="call-name">Connecting…</h1><p id="call-timer">00:00</p><div class="call-controls"><button id="mute-button" aria-label="Mute microphone">🎙</button><button id="hangup-button" class="hangup" aria-label="End call">☎</button></div></div></section>
+  <section id="incoming-modal" class="call-modal" hidden><div class="call-card"><span class="call-state">Incoming voice call</span><div id="incoming-avatar" class="avatar call-avatar">?</div><h1 id="incoming-name">Someone</h1><p>is inviting you to a voice call</p><div class="call-controls"><button id="decline-button" class="hangup">✕</button><button id="accept-button" class="accept">☎</button></div></div></section>
+  <div id="toast" role="status" aria-live="polite"></div><audio id="remote-audio" autoplay playsinline></audio>
   <script src="app.js"></script>
 </body>
 </html>
