@@ -25,7 +25,7 @@ export default {
     const parts = url.pathname.split('/').filter(Boolean);
     if (parts.join('/') === 'api/v1/health') return json({ ok: true, service: 'linkup-api' });
     if (parts.join('/') === 'api/v1/channels/central/messages') {
-      if (request.method === 'GET') return json({ messages: await readMessages(env, 'central') });
+      if (request.method === 'GET') { const limit = Math.min(25, Math.max(1, Number(url.searchParams.get('limit')) || 10)); return json(await readMessages(env, 'central', limit, url.searchParams.get('before') || '')); }
       if (request.method === 'POST') {
         const payload = await request.json().catch(() => null);
         const text = cleanText(payload?.text); const image = cleanImage(payload?.image); const author = cleanAccount(payload?.author);
@@ -40,7 +40,8 @@ export default {
       if (request.method === 'GET') {
         const user = String(url.searchParams.get('user') || '').trim().slice(0, 64);
         if (!user) return json({ error: 'user query parameter is required.' }, 400);
-        return json({ messages: await readMessages(env, `dm:${dmKey(user, partnerId)}`) });
+        const limit = Math.min(25, Math.max(1, Number(url.searchParams.get('limit')) || 10));
+        return json(await readMessages(env, `dm:${dmKey(user, partnerId)}`, limit, url.searchParams.get('before') || ''));
       }
       if (request.method === 'POST') {
         const payload = await request.json().catch(() => null);
