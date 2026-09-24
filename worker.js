@@ -13,8 +13,8 @@ function cleanImage(value) {
 }
 function cleanAccount(value) { if (!value || typeof value !== 'object') return null; const id = String(value.id || '').trim().slice(0, 64); const name = String(value.name || '').trim().slice(0, 24); return id && name ? { id, name } : null; }
 function dmKey(one, two) { return [one, two].sort().join(':'); }
-async function readMessages(env, scope) { const keys = (await env.LCC_KV.get(`index:${scope}`, 'json')) || []; const values = await Promise.all(keys.map(key => env.LCC_KV.get(key, 'json'))); return values.filter(Boolean); }
-async function writeMessage(env, scope, message) { const messageKey = `message:${scope}:${id()}`; const indexKey = `index:${scope}`; const index = (await env.LCC_KV.get(indexKey, 'json')) || []; index.push(messageKey); await Promise.all([env.LCC_KV.put(messageKey, JSON.stringify(message)), env.LCC_KV.put(indexKey, JSON.stringify(index.slice(-500)))]); }
+async function readMessages(env, scope) { const stored = await env.LCC_KV.get(`index:${scope}`, 'json'); const keys = Array.isArray(stored) ? stored : []; const values = await Promise.all(keys.map(key => env.LCC_KV.get(key, 'json'))); return values.filter(Boolean); }
+async function writeMessage(env, scope, message) { const messageKey = `message:${scope}:${id()}`; const indexKey = `index:${scope}`; const stored = await env.LCC_KV.get(indexKey, 'json'); const index = Array.isArray(stored) ? stored : []; index.push(messageKey); await Promise.all([env.LCC_KV.put(messageKey, JSON.stringify(message)), env.LCC_KV.put(indexKey, JSON.stringify(index.slice(-500)))]); }
 
 export default {
   async fetch(request, env) {
