@@ -27,7 +27,7 @@ A message POST body is `{ "text": "Hello", "image": { "name", "type", "data" }, 
 
 ## Notifications
 
-The app registers `sw.js` and asks for browser permission in **Settings**. It stores subscriptions in `LCC_KV` so a future authenticated server-side Web Push sender can notify users while the page is closed. The push service worker displays and opens notifications.
+The app registers `sw.js` and asks for browser permission in **Settings**. Once enabled, it alerts the user to new central and direct messages while LCC Chat is open (including while the tab is in the background). Browser-closed delivery still requires a server-side Web Push sender and VAPID credentials.
 
 ## Call quality
 
