@@ -1,6 +1,6 @@
 # LCC Chat
 
-LCC Chat is a Discord-inspired browser workspace for one-to-one voice calls, direct messages, and a shared `#central` chat. Voice uses PeerJS/WebRTC; chat is backed by Cloudflare Workers KV.
+LCC Chat is a Discord-inspired browser workspace for one-to-one voice and video calls, direct messages, and a shared `#central` chat. Calls use PeerJS/WebRTC; chat is backed by Cloudflare Workers KV.
 
 ## Deploy to Cloudflare Workers
 
@@ -23,7 +23,7 @@ All responses are JSON and CORS-enabled.
 | `GET`, `POST` | `/api/v1/dms/:peerId` | Read or send direct messages; reads need `?user=:yourId` |
 | `POST` | `/api/v1/notifications/subscriptions` | Store a browser Push subscription |
 
-A message POST body is `{ "text": "Hello", "author": { "id": "call-id", "name": "Display name" } }`.
+A message POST body is `{ "text": "Hello", "image": { "name", "type", "data" }, "author": { "id": "call-id", "name": "Display name" } }`. Text and image fields are optional individually, but every message must include at least one. Image uploads are limited to 2 MB and accept PNG, JPEG, GIF, and WebP.
 
 ## Notifications
 
@@ -32,3 +32,7 @@ The app registers `sw.js` and asks for browser permission in **Settings**. It st
 ## Call quality
 
 Calls request 48 kHz, echo-cancelled, noise-suppressed, automatic-gain-controlled audio. For reliable calls across restrictive networks, configure a trusted TURN service in `app.js`; STUN alone cannot guarantee connectivity through every school or mobile network.
+
+## Video calls and soundboard
+
+Use **Video call** from the home screen or a friend row to invite the other person with camera video. The call overlay includes camera and microphone controls. The soundboard accepts custom audio uploads (up to 10 MB each) and stores them in this browser using IndexedDB. During a call, selected clips are mixed into the outgoing WebRTC audio so the other participant hears them.
